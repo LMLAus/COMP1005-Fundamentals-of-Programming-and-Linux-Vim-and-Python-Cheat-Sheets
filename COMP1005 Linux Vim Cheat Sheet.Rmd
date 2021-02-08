@@ -1,0 +1,395 @@
+---
+title: "COMP1005 Linux Vim Cheat Sheet"
+author: "Lisa Luff"
+date: "8/12/2020"
+tables: true
+mainfont: Arial
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\tableofcontents
+
+\newpage
+
+# Unix/Terminal/Shell
+
+## Unix Help
+* Help and information documents run a program called pager
+  * You need to use key binding to move around pager documents
+    * Move down: j, down, page down, enter, or space
+    * Move up: k, up, or page up
+    * Quit: q
+    
+### Help Commands
+
+| Command | Purpose |
+|:-----------|:-----------------------------|
+| man *some_command* | Read the manual page for *some_command* |
+| info *some_command* | Read a more detailed manual (mostly only for GNU programs) |
+| apropos *'search term'* | Find a command whose man page has a matching summary |
+| whatis *some_command* | Print the summary from the man page for *some_command* |
+| whereis *some_command* | Print the path to *some_command* and other paths significant to it |
+
+## File System
+* / is used to direct to a file
+  * You will need to work your way down from the top (files are hierarchial), so it might be /topfile/middlefile/actualfile, etc. to be in the file you want
+* To delete a file, you need to delete the file, and have no processes have a file descriptor for it
+* . refers to the file you are in, and .. refers to the parent file (or file that file is in)
+
+### Working with the file system
+
+| Command | Purpose |
+|:-----------|:-----------------------------|
+| cd *path* | Change your working directory to *path* |
+| ls -*options path* | List files within directory at *path* |
+| pwd | Print working (current) directory |
+| history *n* | Lists *n* most recent commands, can save to file (use -f to search) |
+| cp -*options source dest* | Copy the file at *source* to *destination* file |
+| mv -*options source dest* | Move the file at *source* to *destination* file |
+| rm -*options path* | Remove the file at *path* (use -f to search) |
+| mkdir -*options path* | Create a new directory at *path* |
+| rmdir -*options path* | Remove directory (if empty, or use -R to delete it and contents) |
+| chmod -*options mode path* | Change the permissions of *path* to *mode* (mode is who has permission) |
+| . *path* | Execute *path* |
+| -la | An *option* for all above, shows hidden files |
+| -R | An *option* for above to enact on subdirectories as well |
+
+\newpage
+
+## Working With Processes
+
+| Command | Purpose |
+|:-----------|:-----------------------------|
+| pgreg -*options pattern* | Print the IDs of processes that match *pattern* |
+| ps -*options* | Print a list of running processes and some details about them |
+| top -*options* | Monitor a list of running processes and some details about them |
+| kill -*signal pid* | Send *signal*(type of kill) to a process with the ID *pid*(process to end) |
+| fg *pid* | Continue a recently stopped process *pid* in the foreground |
+| bg *pid* | Continue a recently stopped process *pid* in the background |
+| ctrl q | Will run terminal again if you accidentally press ctrl s |
+
+## Working With Text and Other Data
+
+| Command | Purpose |
+|:-----------|:-----------------------------|
+| vim *file* | Edit the given *file* using vim |
+| echo *words/variable* | Print the given *words/variable* |
+| less *path* | Display the contents of the *path* in a pager (alternative: more, different navigation of page) |
+| head -*n* *path* | Print first 10 (or *n*) lines of *path* |
+| tail -*n* *path* | Print last 10 (or *n*) lines of *path* |
+| more *path* | Open and scroll through *path* one page at a time (space or 'n' - continue, 'b' - backwards, 'q' - exit) |
+| less *path* | Free and open source version of more |
+| awk - F "*sep*" '{*do a, b, c*}' *path* | Reads file, separates with *sep*, counts from 1, prints *a, b, c* - as columns |
+| wget *website* | Get files from web |
+| wc *path* | Word count, three numbers are lines, words, characters |
+| sed s/*from*/*to*/*option* | Print the input, with text matching *from* changed to *to* (use g as the *option* to make it global for the file) |
+| diff *variable/file1 variable/file2* | Print only the lines that are different between *1* and *2* |
+| gnuplot -p *path* | Allows command line plotting of gnuplot in *path*, need package, and script |
+
+\newpage
+
+### Grep
+* Allows sophisticated searches using regular expressions with commands
+
+| Command | Purpose |
+|:--------|:--------|
+| grep *option* *pattern(string)* *path* | Print only the lines in *path* that match *pattern* - as lines |
+| *path* | starts with / and can use ../ to look in parent directory |
+| (*a*\|*b*) | For multiple arguments |
+| *command* *path* \| grep *pattern* | To use commands with grep |
+| -r or -R will look in directory and all subdirectories |
+| -i | Not case sensitive |
+| -c | Counts occurances |
+| -w | Will find only exact |
+| -W | Same but for words |
+| -n | Line number found on |
+| -B | Line before found |
+| -A | Line after found |
+| -h | Suppress file names |
+| -*x**y* | How to combine options |
+| --color *option* | Can change colours of output |
+| - P | An option that allows the use of regular expressions |
+|:--------|:--------|
+| - P command | Use |
+|:--------|:--------|
+| -v | As option for inverse |
+| .*thing* | Can be 0 or 1 *things* |
+| .\* | Wild card |
+| .{*n*, *m*} | Can be between *n* and *m* random assortment of things |
+| ^ | Start of line |
+| \$ | End of line |
+
+
+## Combining Commands 
+| Command | Purpose |
+|:-----------|:-----------------------------|
+| *variable/file1* \| *variable/file2* | Take output of *1*, and pass into *2* as input |
+| *variable/file1* \> *variable/file2* | Take output of *1*, and send to *2* instead of terminal |
+| cat *path* | Concatenate the given files, while printing their contents |
+| cat *variable/file1* \>\> *variable/file2* | Append *1* to *2* |
+| *variable/file1* \< *variable/file2* | Execute *1*, but take input from *2* instead of terminal |
+
+\newpage
+
+## Bash Scripts
+* **Note**: Spaces are important! Cannot have any extra white space
+* Create with vim *filename*.sh - 
+  .sh is the file type for all bash scripts (sh for shell)
+* Run with sh *filename*.sh
+* Uses the same language as terminal
+* Needs to start with
+```{bash, eval=FALSE}
+#!/bin/bash
+```
+* Can only comment with #
+* Use command line arguments:
+  * Don't need to download anything
+  * In script set variables to be defined as \$*n*
+    * \$1 - is the command to run the script
+    * \$2 - onwards - is the arguments after 1, all separated with spaces
+    * \$@ - is all command line arguments
+* You can use command line functions in the script exactly as you would in the command line
+  * Can use mkdir, cd, etc.
+* echo is print, don't need brackets or anything, just not whatever separated with spaces
+* Use functions with accents \`*function*\`
+  * Range: \`seq *low* *step* *high*\`
+  * Date: \`date "+%Y-%M-%d_%H:%M:%s"\`
+* For loop:
+```{bash, eval=FALSE}
+for item in $range
+  do
+    thing
+  done
+```
+  
+## Create a Package
+* Modules are the programs containing functions
+* Packages are the directory containing the modules
+  * Makes a directory a package using:
+    * \_\_init\_\_.py in the directory
+  * Call as 
+```{bash, eval=FALSE}
+import package.module
+```
+
+\newpage
+
+### Creating a Global Package
+* Add to PyPI to use with pip install
+* PyPI - https:\/\/pypi.python.org/
+* Need to consider structure
+  * Need to use guides beyond PEP8
+  * Eg. PEP257 - docstring conventions
+* Package name constraints:
+  * All lowercase
+  * Unique on pypi, even if you don't want to make your package publicly available
+  * Underscore-separated or no work separators at all (no hyphens)
+* Directory structure
+  * Top level directory is the root of the SCN repo, eg *package*.git
+  * Sub-directory of the same name is the actual python module, holds:
+    * \_\_init\_\_.py
+    * setup.py -  
+from setuptools import setup  
+setup(name = '*package*',  
+version = '*n*',  
+description = '*string*',  
+url = '*url*',  
+author = '*me*',  
+author_email = '*email*',  
+license = 'MIT',  
+packages = ['*package*'],  
+zip_safe = False)
+      * Then the package can be downloaded with pip locally
+* To register the package to PyPI  
+\$ python setup.py register
+  * If you haven't registered anything before you will need an account
+  * Then anyone can download it with pip, and it can be made a dependency of other packages, and be automatically installed when that package is installed
+* Ignoring files
+  * Don't want to include all files in the package (Eg. intermediaary files made automatically by Python during development)
+  * Use .gitignore to automate (or equivalent for other SCM/VCS's)
+    * Compiled Python modules:  
+\*.pyc
+    * Setuptools distribution folder:  
+/dist/
+    * Python egg metadata, regenerated from source by setuptools  
+/\*.egg-info
+
+\newpage
+
+## Creating and Opening Zip Files
+* Create the zip file:
+```{bash, eval=FALSE}
+zip filename *
+```
+  * This creates a zip file containing everything in your current directory
+* To save with a specific file name:
+```{bash, eval=FALSE}
+zip -R chosenname 'nameofcurrentfile' *
+```
+* See the contents inside a zip file
+```{bash, eval=FALSE}
+unzip -1 filename.zip
+```
+
+## Accessing Jupyter Notebooks
+* Type jupyter notebooks into terminal in the directory you want to work in
+* Use control-c to close the jupyter notebooks
+
+## Git Version Tracking
+* Three trees of Git:
+  * The HEAD - last commit snapshot, next parent
+  * Index - Proposed next commit snapshot
+  * Working directory - Sandbox
+* Basic workflow:
+  * Init a repo (possible init of clone)
+```{bash, eval=FALSE}
+$ git init
+```
+  * Tell git who you are
+```{bash, eval=FALSE}
+$ git config --global user.name "your name"  
+$ git config --global user.email "your email"
+```
+  * Edit files
+  * Stage the changes  
+```{bash, eval=FALSE}
+$ git status
+```
+  * Review your changes  
+```{bash, eval=FALSE}
+$ git add filename  
+$ git status
+```
+
+\newpage
+
+  * Commit the changes of directory with a comment  
+```{bash, eval=FALSE}
+$ git commit -m "comment"
+```
+* Checking changes and history:
+  * git diff - Show the difference between working directory and staged
+  * git diff --cached - Show the difference between staged and the HEAD
+  * git log - View history
+* Using backups:
+```{bash, eval=FALSE}
+$ git checkout commithash
+```
+    * Commit hash is the first 4 numbers of commit when looking at the log
+* Using remote repository:
+  * Get changes
+    * git fetch
+    * git pull (fetches and merges)
+  * Propagate changes
+    * git push
+  * Protocols
+    * Local filesystem - (file:\/\/)
+    * SSH - (ssh:\/\/)
+    * HTTP - (http:\/\/ or https:\/\/)
+    * Git protocol (git:\/\/)
+    
+![](UnixLinux Commands Image.jpg)
+
+\newpage
+
+# Vi/Vim
+* To open Vim, type vim and the name of the file you want to edit
+
+## Command Mode
+* Command mode - Can use editing commands to manipulate text
+
+### Enter insert mode:
+
+| Command | Purpose |
+|:-----------|:-----------------------------|
+| a | Append. Text is inserted immediately after the cursor position, on the same line |
+| i | Insert. Text is inserted before the position of the cursor position, on the same line |
+| o | Open below. Text is inserted on a new line immediately below the postition of the cursor.
+| O | Open above. Text is inserted on a new line immediately above the position of the cursor |
+
+### Cursor movement
+
+| Command | Purpose |
+|:-----------|:-----------------------------|
+| j | Up |
+| k | Down |
+| h | Left |
+| l | Right |
+| Cursor Keys | Instead of j, k, h, l |
+| w | Move to beginning of the next word |
+| e | Move to the end of the word |
+| 0 | Move to the beginning of the current line |
+| \$ | Move to the end of the current line |
+| G | Move to the last line in the file |
+| *n*G or :*n* | Move to line *n* |
+| Ctrl + u | Page up |
+| Ctrl + d | Page down |
+
+\newpage
+
+### Editing text: 
+$$\begin{tabular}{ l l }
+\toprule
+ Actions (\textit{x}) & Purpose \\
+\hline
+ x & Delete character at the position of the cursor \\
+ c\textit{y} & c for change, will delete and enter insert mode \\
+ d\textit{y} & d for delete \\
+ y\textit{y} & y for yank, copy \\
+ p\textit{y} & p for paste \\
+\toprule
+ Acts on (\textit{y}) & Purpose \\
+\hline
+ \textit{x}e & Enact shortcut to the end of word \\
+ \textit{x}b & Enact shortcut back to beginnging of word \\
+ \textit{x}w & Enact shortcut to next word \\
+ \textit{xx} & Repeat shortcut twice to enact on entire line \\
+ \textit{uppercase} & Change shortcut to upper case enact it to the end of the line \\
+ \textit{x}G & Do thing to end of document \\
+\toprule
+ Additional acting specifiers & Purpose \\
+\hline
+ \textit{nxy} & Enacts shortcut \textit{n} number of times \\
+ \textit{x}i\textit{y} & i for in, enacts shortcut on current position \\
+ \textit{x}t\textit{z} & t for till, enacts shortcut until character specified by \textit{z} \\
+\toprule
+ Other actions & Purpose \\
+\hline
+ u & Undo the action of the previous command \\
+ . & Redo the last command \\
+\toprule
+\end{tabular}$$
+
+### Search Text
+
+| Command | Purpose |
+|:-----------|:-----------------------------|
+| /*string* - enter | Search forward |
+| ?*string* - enter | Search backward |
+| n | Find next occurrence |
+| N | Find previous occurrence |
+
+## Insert Mode 
+* Insert mode - Can enter text into file being edited
+* Esc - Takes you back to command mode
+
+### Exiting Vim:
+
+| Command | Purpose |
+|:-----------|:-----------------------------|
+| ZZ OR :wq | Save and exit |
+| :w | Save do not exit |
+| :w *filename* | Changes the name the of the file |
+| :q | Dot not save, exit only if no changes were made |
+| :q! | Exit but do not save |
+
+## Retrieving lost files
+* **ctrl z** will close vim, but what you were working on will still run in the background, even if unsaved
+* It will be held in a temporary file .*filename*.*filetype*.swp
+
+![](Vim Commands Image.jpg)
+
