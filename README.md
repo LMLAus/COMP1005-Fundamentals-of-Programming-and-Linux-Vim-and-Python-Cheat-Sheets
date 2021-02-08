@@ -7,6 +7,8 @@ Synopsis:
 - Weekly cheats sheets for COMP1005 Fundamentals of Programming
 - Linux/Vim cheat sheet
 - Python cheat sheet
+- Assignment
+- Final exam
 
 Notes:
 - This was not created for use by others
@@ -157,4 +159,10 @@ COMP1005 Week 12
 - Language comparator
 - Object detection
 
+Assignment files
+
+Final exam file
+
 Revisions:    07/11/2020 -  Created repository
+              08/02/2021 -  Amended python and linux/vim cheat sheets
+                            Added assignment and final exam
